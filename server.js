@@ -21,5 +21,5 @@ app.post("/remove_host_ip", (req, res) => {
     res.json({ success: true });
 });
 
-const PORT = 3000 || process.env.PORT;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Serveur lancé sur ${PORT}`));
