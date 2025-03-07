@@ -6,6 +6,7 @@ let host_ip = null;
 
 app.get("/get_host_ip", (req, res) => {
     res.json({ host_ip });
+    console.log("get_host_ip : ", host_ip);
 });
 
 app.post("/set_host_ip", (req, res) => {
