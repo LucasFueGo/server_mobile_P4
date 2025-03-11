@@ -21,7 +21,7 @@ app.post("/remove_host_ip", (req, res) => {
     res.json({ success: true });
 });
 
-app.get("/remove_host_ip>_2", (req, res) => {
+app.get("/remove_host_ip_2", (req, res) => {
     host_ip = null;
     console.log("Hôte supprimé.");
 });
