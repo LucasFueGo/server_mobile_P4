@@ -21,5 +21,10 @@ app.post("/remove_host_ip", (req, res) => {
     res.json({ success: true });
 });
 
+app.get("/remove_host_ip>_2", (req, res) => {
+    host_ip = null;
+    console.log("Hôte supprimé.");
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Serveur lancé sur ${PORT}`));
