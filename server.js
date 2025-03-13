@@ -19,12 +19,14 @@ app.post("/set_host_ip", (req, res) => {
 });
 
 app.post("/remove_host_ip", (req, res) => {
+    if (host_ip) clientsMap.delete(host_ip);
     host_ip = null;
     console.log("Hôte supprimé.");
     res.json({ success: true });
 });
 
 app.get("/remove_host_ip_2", (req, res) => {
+    if (host_ip) clientsMap.delete(host_ip);
     host_ip = null;
     console.log("Hôte supprimé.");
     res.json({ host_ip });
@@ -43,6 +45,18 @@ app.post("/add_client", (req, res) => {
     
     clientsMap.get(host_ip).add(client_ip);
     console.log(`Client ${client_ip} ajouté à l'hôte ${host_ip}.`);
+    res.json({ success: true });
+});
+
+
+app.post("/remove_client", (req, res) => {
+    const client_ip = req.body.client_ip;
+    if (!host_ip || !clientsMap.has(host_ip)) {
+        return res.status(400).json({ error: "Aucun hôte ou liste de clients introuvable." });
+    }
+    
+    clientsMap.get(host_ip).delete(client_ip);
+    console.log(`Client ${client_ip} supprimé de l'hôte ${host_ip}.`);
     res.json({ success: true });
 });
 
