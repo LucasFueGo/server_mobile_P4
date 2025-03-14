@@ -18,14 +18,8 @@ app.post("/set_host_ip", (req, res) => {
     res.json({ success: true });
 });
 
-app.post("/remove_host_ip", (req, res) => {
-    if (host_ip) clientsMap.delete(host_ip);
-    host_ip = null;
-    console.log("Hôte supprimé.");
-    res.json({ success: true });
-});
 
-app.get("/remove_host_ip_2", (req, res) => {
+app.get("/remove_host_ip", (req, res) => {
     if (host_ip) clientsMap.delete(host_ip);
     host_ip = null;
     console.log("Hôte supprimé.");
