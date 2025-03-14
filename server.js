@@ -43,7 +43,7 @@ app.post("/add_client", (req, res) => {
 });
 
 
-app.post("/remove_client", (req, res) => {
+app.post("/remove_client_ip", (req, res) => {
     const client_ip = req.body.client_ip;
     if (!host_ip || !clientsMap.has(host_ip)) {
         return res.status(400).json({ error: "Aucun hôte ou liste de clients introuvable." });
