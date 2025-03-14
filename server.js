@@ -68,5 +68,15 @@ app.get("/get_clients", (req, res) => {
 });
 
 
+//get all players (host + clients)
+app.get("/get_all_players", (req, res) => {
+    const players = [];
+    for (const [host, clients] of clientsMap.entries()) {
+        players.push({ host, clients: Array.from(clients) });
+    }
+    res.json({ players });
+});
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Serveur lancé sur ${PORT}`));
