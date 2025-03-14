@@ -70,12 +70,18 @@ app.get("/get_clients", (req, res) => {
 
 //get all players (host + clients)
 app.get("/get_all_players", (req, res) => {
-    const players = [];
-    for (const [host, clients] of clientsMap.entries()) {
-        players.push({ host, clients: Array.from(clients) });
+    if (!host_ip) {
+        return res.json({ players: [] });
     }
+
+    const players = [host_ip]; // Commence par ajouter l'hôte
+    if (clientsMap.has(host_ip)) {
+        players.push(...clientsMap.get(host_ip)); // Ajoute tous les clients
+    }
+
     res.json({ players });
 });
+
 
 
 const PORT = process.env.PORT || 3000;
