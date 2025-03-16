@@ -127,18 +127,10 @@ app.get("/get_alive_players", (req, res) => {
     // Récupérer tous les joueurs vivants (l'hôte + clients)
     let alivePlayers = [];
 
-    // Ajouter l'hôte s'il est en vie
-    // if (clientsMap.has(host_ip) && clientsMap.get(host_ip).has(host_ip)) {
-    //     const hostData = clientsMap.get(host_ip).get(host_ip);
-    //     if (!hostData.isDead) {
-    //         alivePlayers.push(host_ip);
-    //     }
-    // }
-
     // Ajouter les clients vivants
     clientsMap.get(host_ip).forEach((playerData, playerIp) => {
         if (!playerData.isDead) {
-            alivePlayers.push(playerIp);
+            alivePlayers.push(playerIp.ip);
         }
     });
 
