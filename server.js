@@ -108,13 +108,39 @@ app.post("/mark_player_dead", (req, res) => {
 
 
 
+// app.get("/get_alive_players", (req, res) => {
+//     if (!host_ip || !clientsMap.has(host_ip)) {
+//         return res.json({ players: [] });
+//     }
+
+//     // Filtrer uniquement les joueurs vivants
+//     const alivePlayers = Array.from(clientsMap.get(host_ip)).filter(player => !player.isDead);
+
+//     res.json({ players: alivePlayers });
+// });
+
 app.get("/get_alive_players", (req, res) => {
     if (!host_ip || !clientsMap.has(host_ip)) {
         return res.json({ players: [] });
     }
 
-    // Filtrer uniquement les joueurs vivants
-    const alivePlayers = Array.from(clientsMap.get(host_ip)).filter(player => !player.isDead);
+    // Récupérer tous les joueurs vivants (l'hôte + clients)
+    let alivePlayers = [];
+
+    // Ajouter l'hôte s'il est en vie
+    // if (clientsMap.has(host_ip) && clientsMap.get(host_ip).has(host_ip)) {
+    //     const hostData = clientsMap.get(host_ip).get(host_ip);
+    //     if (!hostData.isDead) {
+    //         alivePlayers.push(host_ip);
+    //     }
+    // }
+
+    // Ajouter les clients vivants
+    clientsMap.get(host_ip).forEach((playerData, playerIp) => {
+        if (!playerData.isDead) {
+            alivePlayers.push(playerIp);
+        }
+    });
 
     res.json({ players: alivePlayers });
 });
