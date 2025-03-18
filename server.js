@@ -74,7 +74,7 @@ app.get("/get_all_players", (req, res) => {
         return res.json({ players: [] });
     }
 
-    const players = [host_ip]; // Commence par ajouter l'hôte
+    const players = [];
     if (clientsMap.has(host_ip)) {
         players.push(...clientsMap.get(host_ip)); // Ajoute tous les clients
     }
@@ -105,19 +105,6 @@ app.post("/mark_player_dead", (req, res) => {
     console.log(`Le joueur ${player_ip} est maintenant mort.`);
     res.json({ success: true });
 });
-
-
-
-// app.get("/get_alive_players", (req, res) => {
-//     if (!host_ip || !clientsMap.has(host_ip)) {
-//         return res.json({ players: [] });
-//     }
-
-//     // Filtrer uniquement les joueurs vivants
-//     const alivePlayers = Array.from(clientsMap.get(host_ip)).filter(player => !player.isDead);
-
-//     res.json({ players: alivePlayers });
-// });
 
 app.get("/get_alive_players", (req, res) => {
     if (!host_ip || !clientsMap.has(host_ip)) {
