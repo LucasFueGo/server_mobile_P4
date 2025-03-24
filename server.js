@@ -106,6 +106,17 @@ app.post("/mark_player_dead", (req, res) => {
     res.json({ success: true });
 });
 
+app.post("/start_votation", (req, res) => {
+    if (!host_ip || !clientsMap.has(host_ip)) {
+        return res.status(400).json({ error: "Aucun hôte ou clients trouvés." });
+    }
+
+    console.log("Le vote commence !");
+    res.json({ success: true, message: "Début du vote !" });
+});
+
+
+
 app.get("/get_alive_players", (req, res) => {
     if (!host_ip || !clientsMap.has(host_ip)) {
         return res.json({ players: [] });
