@@ -128,6 +128,11 @@ app.get("/get_alive_players", (req, res) => {
 });
 
 
+app.get("/get_number_woods", (req, res) => {
+    res.json({ number_woods });
+    console.log("get_number_woods : ", number_woods);
+});
+
 app.post("/set_number_woods", (req, res) => {
     const { woods } = req.body;
     number_woods = woods;
