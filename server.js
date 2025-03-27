@@ -27,6 +27,8 @@ app.get("/remove_host_ip", (req, res) => {
     if (host_ip) clients_map.delete(host_ip);
     host_ip = null;
     console.log("Hôte supprimé.");
+    number_woods = 0; // Réinitialiser le nombre de bois
+    console.log("Nombre de bois réinitialisé à 0.");
     res.json({ host_ip });
 });
 
