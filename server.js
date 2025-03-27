@@ -75,7 +75,7 @@ app.get("/get_all_players", (req, res) => {
         return res.json({ players: [] });
     }
 
-    const players = [host_ip]; // Commence par ajouter l'hôte
+    const players = [];
     if (clientsMap.has(host_ip)) {
         players.push(...clientsMap.get(host_ip)); // Ajoute tous les clients
     }
