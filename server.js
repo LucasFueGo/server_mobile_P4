@@ -137,7 +137,7 @@ app.get("/get_number_woods", (req, res) => {
 
 app.post("/set_number_woods", (req, res) => {
     const { woods } = req.body;
-    number_woods = woods;
+    number_woods += woods;
     console.log("Nombre de bois défini à :", number_woods);
     res.json({ success: true });
 });
