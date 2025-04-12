@@ -108,7 +108,7 @@ app.post("/mark_player_dead", (req, res) => {
 
     players.forEach(player => {
         if (player.ip === player_ip) {
-            updatedPlayers.add({ ip: player.ip, isDead: true }); // Met à jour isDead à true
+            updatedPlayers.add({ ip: player.ip, name: player.name, isDead: true }); // Met à jour isDead à true
         } else {
             updatedPlayers.add(player);
         }
