@@ -4,7 +4,10 @@ app.use(express.json());
 
 let host_ip = null;
 
-let clientsMap = new Map();
+let clients_map = new Map();
+
+let number_woods = 0;
+
 
 app.get("/get_host_ip", (req, res) => {
     res.json({ host_ip });
@@ -14,16 +17,18 @@ app.get("/get_host_ip", (req, res) => {
 app.post("/set_host_ip", (req, res) => {
     console.log(req.body.host_ip);
     host_ip = req.body.host_ip;
-    clientsMap.set(host_ip, new Set([{ ip: host_ip, isDead: false }])); // L'hôte est ajouté
+    clients_map.set(host_ip, new Set([{ ip: host_ip, isDead: false }])); // L'hôte est ajouté
     console.log("Nouvel hôte :", host_ip);
     res.json({ success: true });
 });
 
 
 app.get("/remove_host_ip", (req, res) => {
-    if (host_ip) clientsMap.delete(host_ip);
+    if (host_ip) clients_map.delete(host_ip);
     host_ip = null;
     console.log("Hôte supprimé.");
+    number_woods = 0; // Réinitialiser le nombre de bois
+    console.log("Nombre de bois réinitialisé à 0.");
     res.json({ host_ip });
 });
 
@@ -34,11 +39,11 @@ app.post("/add_client", (req, res) => {
         return res.status(400).json({ error: "Aucun hôte défini." });
     }
 
-    if (!clientsMap.has(host_ip)) {
-        clientsMap.set(host_ip, new Set());
+    if (!clients_map.has(host_ip)) {
+        clients_map.set(host_ip, new Set());
     }
 
-    clientsMap.get(host_ip).add({ ip: client_ip, isDead: false });
+    clients_map.get(host_ip).add({ ip: client_ip, isDead: false });
     console.log(`Client ${client_ip} ajouté à l'hôte ${host_ip}.`);
     res.json({ success: true });
 });
@@ -46,12 +51,12 @@ app.post("/add_client", (req, res) => {
 
 app.post("/remove_client_ip", (req, res) => {
     const client_ip = req.body.client_ip;
-    if (!host_ip || !clientsMap.has(host_ip)) {
+    if (!host_ip || !clients_map.has(host_ip)) {
         return res.status(400).json({ error: "Aucun hôte ou liste de clients introuvable." });
     }
 
-    let clientSet = clientsMap.get(host_ip);
-    clientsMap.set(
+    let clientSet = clients_map.get(host_ip);
+    clients_map.set(
         host_ip,
         new Set([...clientSet].filter(client => client.ip !== client_ip))
     );
@@ -62,10 +67,10 @@ app.post("/remove_client_ip", (req, res) => {
 
 
 app.get("/get_clients", (req, res) => {
-    if (!host_ip || !clientsMap.has(host_ip)) {
+    if (!host_ip || !clients_map.has(host_ip)) {
         return res.json({ clients: [] });
     }
-    res.json({ clients: Array.from(clientsMap.get(host_ip)) });
+    res.json({ clients: Array.from(clients_map.get(host_ip)) });
 });
 
 
@@ -76,8 +81,8 @@ app.get("/get_all_players", (req, res) => {
     }
 
     const players = [];
-    if (clientsMap.has(host_ip)) {
-        players.push(...clientsMap.get(host_ip)); // Ajoute tous les clients
+    if (clients_map.has(host_ip)) {
+        players.push(...clients_map.get(host_ip)); // Ajoute tous les clients
     }
 
     res.json({ players });
@@ -86,11 +91,11 @@ app.get("/get_all_players", (req, res) => {
 
 app.post("/mark_player_dead", (req, res) => {
     const { player_ip } = req.body;
-    if (!host_ip || !clientsMap.has(host_ip)) {
+    if (!host_ip || !clients_map.has(host_ip)) {
         return res.status(400).json({ error: "Aucun hôte ou liste de joueurs introuvable." });
     }
 
-    let players = clientsMap.get(host_ip);
+    let players = clients_map.get(host_ip);
     let updatedPlayers = new Set();
 
     players.forEach(player => {
@@ -101,7 +106,7 @@ app.post("/mark_player_dead", (req, res) => {
         }
     });
 
-    clientsMap.set(host_ip, updatedPlayers);
+    clients_map.set(host_ip, updatedPlayers);
 
     console.log(`Le joueur ${player_ip} est maintenant mort.`);
     res.json({ success: true });
@@ -109,21 +114,31 @@ app.post("/mark_player_dead", (req, res) => {
 
 
 app.get("/get_alive_players", (req, res) => {
-    if (!host_ip || !clientsMap.has(host_ip)) {
+    if (!host_ip || !clients_map.has(host_ip)) {
         return res.json({ players: [] });
     }
-
-    // Récupérer tous les joueurs vivants (l'hôte + clients)
+    
     let alivePlayers = [];
 
-    // Ajouter les clients vivants
-    clientsMap.get(host_ip).forEach((playerData, playerIp) => {
+    clients_map.get(host_ip).forEach((playerData, playerIp) => {
         if (!playerData.isDead) {
             alivePlayers.push(playerIp.ip);
         }
     });
 
     res.json({ players: alivePlayers });
+});
+
+
+app.get("/get_number_woods", (req, res) => {
+    res.json({ number_woods });
+});
+
+app.post("/set_number_woods", (req, res) => {
+    const { woods } = req.body;
+    number_woods += woods;
+    console.log("Nombre de bois défini à :", number_woods);
+    res.json({ success: true });
 });
 
 
