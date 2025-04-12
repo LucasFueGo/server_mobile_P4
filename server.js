@@ -8,6 +8,11 @@ let clients_map = new Map();
 
 let number_woods = 0;
 
+const availableNames = [
+    "marie", "lucas", "aurelien", "melano", "antoine","bob", "alice", "jade", "leo", "emma", "nina", "max", "sofia", "theo", "liam"
+];
+
+
 
 app.get("/get_host_ip", (req, res) => {
     res.json({ host_ip });
@@ -144,3 +149,25 @@ app.post("/set_number_woods", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Serveur lancé sur ${PORT}`));
+
+function getRandomName(existingPlayers) {
+    const usedNames = new Set(existingPlayers.map(p => p.name));
+    const unusedNames = availableNames.filter(name => !usedNames.has(name));
+
+    if (unusedNames.length < 0){
+        for (let baseName of availableNames) {
+            for (let i = 1; i < 1000; i++) {
+                const newName = `${baseName}${i}`;
+                if (!usedNames.has(newName)) {
+                    return newName;
+                }
+            }
+        }
+
+    }
+
+    //if (unusedNames.length === 0) return "unknown"; 
+    const index = Math.floor(Math.random() * unusedNames.length);
+
+    return unusedNames[index];
+}
