@@ -22,7 +22,7 @@ app.get("/get_host_ip", (req, res) => {
 app.post("/set_host_ip", (req, res) => {
     console.log(req.body.host_ip);
     host_ip = req.body.host_ip;
-    clients_map.set(host_ip, new Set([{ ip: host_ip, isDead: false }])); // L'hôte est ajouté
+    clients_map.set(host_ip, new Set([{ ip: host_ip, name: "Host", isDead: false }])); // L'hôte est ajouté
     console.log("Nouvel hôte :", host_ip);
     res.json({ success: true });
 });
@@ -48,7 +48,10 @@ app.post("/add_client", (req, res) => {
         clients_map.set(host_ip, new Set());
     }
 
-    clients_map.get(host_ip).add({ ip: client_ip, isDead: false });
+    const existingPlayers = Array.from(clients_map.get(host_ip));
+    const name = getRandomName(existingPlayers);
+
+    clients_map.get(host_ip).add({ ip: client_ip,name : name, isDead: false });
     console.log(`Client ${client_ip} ajouté à l'hôte ${host_ip}.`);
     res.json({ success: true });
 });
