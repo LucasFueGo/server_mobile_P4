@@ -22,6 +22,7 @@ app.get("/get_host_ip", (req, res) => {
 app.post("/set_host_ip", (req, res) => {
     console.log(req.body.host_ip);
     host_ip = req.body.host_ip;
+    const name = getRandomName([]);
     clients_map.set(host_ip, new Set([{ ip: host_ip, name: "Host", isDead: false }])); // L'hôte est ajouté
     console.log("Nouvel hôte :", host_ip);
     res.json({ success: true });
@@ -149,11 +150,9 @@ app.post("/set_number_woods", (req, res) => {
     res.json({ success: true });
 });
 
-//const PORT = process.env.PORT || 3000;
-//app.listen(PORT, () => console.log(`Serveur lancé sur ${PORT}`));
-app.listen(3000, '127.0.0.1', () => {
-    console.log('Serveur local lancé sur http://127.0.0.1:3000');
-  });
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Serveur lancé sur ${PORT}`));
+//app.listen(3000, '127.0.0.1', () => {console.log('Serveur local lancé sur http://127.0.0.1:3000');});
 
 function getRandomName(existingPlayers) {
     const usedNames = new Set(existingPlayers.map(p => p.name));
