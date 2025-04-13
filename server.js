@@ -8,6 +8,11 @@ let clients_map = new Map();
 
 let number_woods = 0;
 
+const availableNames = [
+    "marie", "lucas", "aurelien", "melano", "antoine","bob", "alice", "jade", "leo", "emma", "nina", "max", "sofia", "theo", "liam"
+];
+
+
 
 app.get("/get_host_ip", (req, res) => {
     res.json({ host_ip });
@@ -17,7 +22,8 @@ app.get("/get_host_ip", (req, res) => {
 app.post("/set_host_ip", (req, res) => {
     console.log(req.body.host_ip);
     host_ip = req.body.host_ip;
-    clients_map.set(host_ip, new Set([{ ip: host_ip, isDead: false }])); // L'hôte est ajouté
+    const name = getRandomName([]);
+    clients_map.set(host_ip, new Set([{ ip: host_ip, name: "Host", isDead: false }])); // L'hôte est ajouté
     console.log("Nouvel hôte :", host_ip);
     res.json({ success: true });
 });
@@ -43,7 +49,10 @@ app.post("/add_client", (req, res) => {
         clients_map.set(host_ip, new Set());
     }
 
-    clients_map.get(host_ip).add({ ip: client_ip, isDead: false });
+    const existingPlayers = Array.from(clients_map.get(host_ip));
+    const name = getRandomName(existingPlayers);
+
+    clients_map.get(host_ip).add({ ip: client_ip, name : name, isDead: false });
     console.log(`Client ${client_ip} ajouté à l'hôte ${host_ip}.`);
     res.json({ success: true });
 });
@@ -100,7 +109,7 @@ app.post("/mark_player_dead", (req, res) => {
 
     players.forEach(player => {
         if (player.ip === player_ip) {
-            updatedPlayers.add({ ip: player.ip, isDead: true }); // Met à jour isDead à true
+            updatedPlayers.add({ ip: player.ip, name: player.name, isDead: true }); // Met à jour isDead à true
         } else {
             updatedPlayers.add(player);
         }
@@ -120,9 +129,9 @@ app.get("/get_alive_players", (req, res) => {
     
     let alivePlayers = [];
 
-    clients_map.get(host_ip).forEach((playerData, playerIp) => {
+    clients_map.get(host_ip).forEach((playerData, player) => {
         if (!playerData.isDead) {
-            alivePlayers.push(playerIp.ip);
+            alivePlayers.push(player.name);
         }
     });
 
@@ -141,6 +150,28 @@ app.post("/set_number_woods", (req, res) => {
     res.json({ success: true });
 });
 
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Serveur lancé sur ${PORT}`));
+//app.listen(3000, '127.0.0.1', () => {console.log('Serveur local lancé sur http://127.0.0.1:3000');});
+
+function getRandomName(existingPlayers) {
+    const usedNames = new Set(existingPlayers.map(p => p.name));
+    const unusedNames = availableNames.filter(name => !usedNames.has(name));
+
+    if (unusedNames.length < 0){
+        for (let baseName of availableNames) {
+            for (let i = 1; i < 1000; i++) {
+                const newName = `${baseName}${i}`;
+                if (!usedNames.has(newName)) {
+                    return newName;
+                }
+            }
+        }
+
+    }
+
+    //if (unusedNames.length === 0) return "unknown"; 
+    const index = Math.floor(Math.random() * unusedNames.length);
+
+    return unusedNames[index];
+}
