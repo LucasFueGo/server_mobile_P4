@@ -130,7 +130,7 @@ app.get("/get_alive_players", (req, res) => {
 
     clients_map.get(host_ip).forEach((playerData, playerIp) => {
         if (!playerData.isDead) {
-            alivePlayers.push(playerIp.ip);
+            alivePlayers.push({ ip: player.ip, name: player.name });
         }
     });
 
