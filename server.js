@@ -99,30 +99,6 @@ app.get("/get_all_players", (req, res) => {
 
 
 app.post("/mark_player_dead", (req, res) => {
-    const { player_ip } = req.body;
-    if (!host_ip || !clients_map.has(host_ip)) {
-        return res.status(400).json({ error: "Aucun hôte ou liste de joueurs introuvable." });
-    }
-
-    let players = clients_map.get(host_ip);
-    let updatedPlayers = new Set();
-
-    players.forEach(player => {
-        if (player.ip === player_ip) {
-            updatedPlayers.add({ ip: player.ip, name: player.name, isDead: true }); // Met à jour isDead à true
-        } else {
-            updatedPlayers.add(player);
-        }
-    });
-
-    clients_map.set(host_ip, updatedPlayers);
-
-    console.log(`Le joueur ${player_ip} est maintenant mort.`);
-    res.json({ success: true });
-});
-
-
-app.post("/mark_player_dead_with_name", (req, res) => {
     const { player_name } = req.body;
     if (!host_ip || !clients_map.has(host_ip)) {
         return res.status(400).json({ error: "Aucun hôte ou liste de joueurs introuvable." });
@@ -131,25 +107,18 @@ app.post("/mark_player_dead_with_name", (req, res) => {
     let players = clients_map.get(host_ip);
     let updatedPlayers = new Set();
 
-    let found = false;
-
     players.forEach(player => {
-        if (player.name == player_name && player.isDead == false) {
+        if (player.name === player_name) {
             updatedPlayers.add({ ip: player.ip, name: player.name, isDead: true }); // Met à jour isDead à true
-            found = true
         } else {
             updatedPlayers.add(player);
         }
     });
 
     clients_map.set(host_ip, updatedPlayers);
-    if (found) {
-        console.log(`Le joueur ${player_name} est maintenant mort.`);
-        res.json({ success: true });
-    } else {
-        res.status(404).json({ error: "Joueur non trouvé." });
-    }
-    
+
+    console.log(`Le joueur ${player_name} est maintenant mort.`);
+    res.json({ success: true });
 });
 
 app.get("/get_alive_players", (req, res) => {
