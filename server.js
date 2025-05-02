@@ -122,6 +122,36 @@ app.post("/mark_player_dead", (req, res) => {
 });
 
 
+app.post("/mark_player_dead_with_name", (req, res) => {
+    const { player_name } = req.body;
+    if (!host_ip || !clients_map.has(host_ip)) {
+        return res.status(400).json({ error: "Aucun hôte ou liste de joueurs introuvable." });
+    }
+
+    let players = clients_map.get(host_ip);
+    let updatedPlayers = new Set();
+
+    let found = false;
+
+    players.forEach(player => {
+        if (player.name == player_name && player.isDead == false) {
+            updatedPlayers.add({ ip: player.ip, name: player.name, isDead: true }); // Met à jour isDead à true
+            found = true
+        } else {
+            updatedPlayers.add(player);
+        }
+    });
+
+    clients_map.set(host_ip, updatedPlayers);
+    if (found) {
+        console.log(`Le joueur ${player_name} est maintenant mort.`);
+        res.json({ success: true });
+    } else {
+        res.status(404).json({ error: "Joueur non trouvé." });
+    }
+    
+});
+
 app.get("/get_alive_players", (req, res) => {
     if (!host_ip || !clients_map.has(host_ip)) {
         return res.json({ players: [] });
