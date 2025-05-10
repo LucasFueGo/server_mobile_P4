@@ -205,3 +205,28 @@ function getRandomName(existingPlayers) {
 
     return unusedNames[index];
 }
+
+function getLinearName(existingPlayers) {
+    const usedNames = new Set(existingPlayers.map(p => p.name));
+    const unusedNames = availableNames.filter(name => !usedNames.has(name));
+
+    if (unusedNames.length < 0){
+        for (let baseName of availableNames) {
+            for (let i = 1; i < 1000; i++) {
+                const newName = `${baseName}${i}`;
+                if (!usedNames.has(newName)) {
+                    return newName;
+                }
+            }
+        }
+    }
+
+    // Choix linéaire : on prend le premier disponible dans l'ordre
+    if (unusedNames.length > 0) {
+        return unusedNames[0];
+    }
+
+    return "unknown";
+}
+
+
